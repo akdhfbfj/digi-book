@@ -1,8 +1,95 @@
 body {
     font-family: 'Nanum Gothic', sans-serif;
+    font-size: 1.0625rem;
+    line-height: 1.55;
     background: linear-gradient(135deg, #fff9db 0%, #e3f2fd 100%);
+    background-attachment: fixed;
     min-height: 100vh;
+    min-height: 100dvh;
     color: #334155;
+    margin: 0;
+}
+
+@media (min-width: 640px) {
+    body {
+        font-size: 1.125rem;
+    }
+}
+
+.app-shell {
+    min-height: 100dvh;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+}
+
+.app-main {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    padding-bottom: calc(5.5rem + env(safe-area-inset-bottom, 0px));
+}
+
+@media (min-width: 640px) {
+    .app-main {
+        padding-bottom: calc(6rem + env(safe-area-inset-bottom, 0px));
+    }
+}
+
+.app-feed-panel {
+    flex: 1 1 auto;
+    min-height: min(70dvh, 42rem);
+    display: flex;
+    flex-direction: column;
+    background: rgba(255, 255, 255, 0.78);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 1.5rem;
+    border: 2px solid rgba(255, 255, 255, 0.95);
+    box-shadow: 0 8px 32px rgba(15, 23, 42, 0.08);
+    padding: 1rem 1.125rem 1.25rem;
+    overflow: hidden;
+}
+
+@media (min-width: 640px) {
+    .app-feed-panel {
+        border-radius: 2rem;
+        padding: 1.35rem 1.75rem 1.5rem;
+        min-height: min(72dvh, 44rem);
+    }
+}
+
+@media (min-width: 1024px) {
+    .app-feed-panel {
+        min-height: calc(100dvh - 11.5rem);
+        min-height: calc(100vh - 11.5rem);
+    }
+}
+
+.app-mailbox-shell {
+    flex: 1 1 auto;
+    min-height: min(76dvh, 40rem);
+    max-height: calc(100dvh - 10rem);
+}
+
+@media (min-width: 640px) {
+    .app-mailbox-shell {
+        min-height: min(78dvh, 44rem);
+    }
+}
+
+@media (min-width: 1024px) {
+    .app-mailbox-shell {
+        min-height: calc(100dvh - 11.5rem);
+        max-height: calc(100dvh - 10rem);
+    }
+}
+
+.app-bottom-nav {
+    padding-bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px));
+    padding-top: 0.75rem;
 }
 
 .font-gaegu {
@@ -28,8 +115,14 @@ body {
 
 .nav-text {
     color: #1e293b;
-    font-size: 11px;
+    font-size: 13px;
     font-weight: 800;
+}
+
+@media (min-width: 640px) {
+    .nav-text {
+        font-size: 14px;
+    }
 }
 
 .nav-item.active .nav-text {
@@ -44,7 +137,7 @@ body {
     flex-direction: column;
     align-items: center;
     padding: 4px;
-    font-size: 10px;
+    font-size: 11px;
     border: 1px solid #f1f5f9;
 }
 
