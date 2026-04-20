@@ -1,0 +1,7 @@
+{
+    "name": "digi-book",
+    "private": true,
+    "scripts": {
+        "build": "node scripts/write-aladin-config.js"
+    }
+}
