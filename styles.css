@@ -1,0 +1,91 @@
+body {
+    font-family: 'Nanum Gothic', sans-serif;
+    background: linear-gradient(135deg, #fff9db 0%, #e3f2fd 100%);
+    min-height: 100vh;
+    color: #334155;
+}
+
+.font-gaegu {
+    font-family: 'Gaegu', cursive;
+}
+
+.bubble-card {
+    background: rgba(255, 255, 255, 0.98);
+    border-radius: 2rem;
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.05);
+    border: 4px solid white;
+}
+
+.nav-item {
+    color: #475569;
+    transition: all 0.3s;
+}
+
+.nav-item.active {
+    color: #4338ca;
+    transform: scale(1.1) translateY(-4px);
+}
+
+.nav-text {
+    color: #1e293b;
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.nav-item.active .nav-text {
+    color: #4338ca;
+}
+
+.calendar-day {
+    aspect-ratio: 1 / 1.2;
+    border-radius: 0.75rem;
+    background: #f8fafc;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 4px;
+    font-size: 10px;
+    border: 1px solid #f1f5f9;
+}
+
+.calendar-day.today {
+    border: 2px solid #6366f1;
+    background: #eef2ff;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+    width: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 10px;
+}
+
+.animate-pop {
+    animation: pop 0.3s ease-out;
+}
+
+@keyframes pop {
+    0% {
+        transform: scale(0.95);
+        opacity: 0;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.chat-bubble-me {
+    background-color: #fee500;
+    color: #3b1e1e;
+    border-radius: 1rem 0 1rem 1rem;
+}
+
+.chat-bubble-other {
+    background-color: #ffffff;
+    color: #334155;
+    border-radius: 0 1rem 1rem 1rem;
+    border: 1px solid #e2e8f0;
+}
