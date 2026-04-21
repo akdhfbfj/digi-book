@@ -59,7 +59,7 @@ function buildAladinItemSearchScriptUrl(searchWord, callbackName) {
         SearchTarget: "Book",
         output: "js",
         Cover: "MidBig",
-        Callback: callbackName,
+        CallBack: callbackName,
     });
     // Version=20131101 을 넣으면 Callback 이 있어도 JSON만 내려와 <script> 실행이 깨짐 → JSONP용 요청에서는 생략
     return `${ALADIN_ITEM_SEARCH_URL}?${params.toString()}`;
@@ -104,7 +104,20 @@ function aladinItemSearchJsonp(query) {
         const tid = setTimeout(() => done(new Error("알라딘 검색 시간이 초과되었어요.")), 15000);
 
         window[cbName] = (ok, data) => {
-            if (!ok) return done(new Error("알라딘 검색에 실패했어요."));
+            // TTB output=js: 성공 (true, payload), 실패 (false, { errorCode, errorMessage })
+            if (arguments.length === 1) {
+                const payload = ok;
+                if (payload && typeof payload.errorCode === "number" && payload.errorCode !== 0) {
+                    return done(new Error(payload.errorMessage || "알라딘 API 오류"));
+                }
+                return done(null, normalizeAladinItemList(payload));
+            }
+            if (!ok) {
+                const detail = (data && data.errorMessage) || "";
+                const hint =
+                    "알라딘 검색에 실패했어요. TTB 키 관리(알라딘 오픈API)에서 웹 사용 도메인에 배포 주소(예: opobook53.vercel.app)를 넣었는지 확인해 주세요. 로컬(127.0.0.1)만 허용된 키는 배포 사이트에서 막힐 수 있어요.";
+                return done(new Error(detail || hint));
+            }
             done(null, normalizeAladinItemList(data));
         };
 
