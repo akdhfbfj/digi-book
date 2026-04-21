@@ -134,6 +134,43 @@ function aladinItemSearchJsonp(query) {
     });
 }
 
+/**
+ * Vercel 등: /api/aladin-search 서버 프록시(환경 변수 키) 우선.
+ * 로컬 Live Server 등에서는 API 404/실패 시 브라우저 JSONP + 클라이언트 키로 폴백.
+ */
+async function aladinItemSearch(query) {
+    const q = (query || "").trim();
+    if (!q) return Promise.reject(new Error("검색어를 입력해 주세요."));
+
+    let proxyRes = null;
+    let proxyData = null;
+    try {
+        proxyRes = await fetch(`/api/aladin-search?q=${encodeURIComponent(q)}`);
+        proxyData = await proxyRes.json();
+    } catch {
+        proxyRes = null;
+        proxyData = null;
+    }
+
+    if (proxyRes && proxyRes.ok && proxyData) {
+        if (proxyData.ok === false) {
+            return Promise.reject(new Error(proxyData.errorMessage || proxyData.error || "알라딘 검색에 실패했어요."));
+        }
+        if (proxyData.ok === true && Array.isArray(proxyData.items)) {
+            return proxyData.items;
+        }
+    }
+
+    if (!getAladinTtbKey()) {
+        return Promise.reject(
+            new Error(
+                "알라딘 검색을 쓰려면 키가 필요해요.\n\n[Vercel] Environment Variables → ALADIN_TTB_KEY → 재배포\n[로컬] aladin.config.local.js → window.__ALADIN_TTB_KEY__ = \"TTB키\";"
+            )
+        );
+    }
+    return aladinItemSearchJsonp(q);
+}
+
 const { useState, useEffect, useMemo } = React;
 
 const KDC_LABELS = {
@@ -675,7 +712,7 @@ function App() {
         setAladinLoading(true);
         setAladinResults([]);
         try {
-            const items = await aladinItemSearchJsonp(q);
+            const items = await aladinItemSearch(q);
             setAladinResults(items);
             if (items.length === 0)
                 showAlert("검색 결과가 없어요. 책 이름 일부나 저자, 다른 단어로 다시 검색해 보세요.", "📚");
