@@ -77,7 +77,9 @@ function aladinItemSearchJsonp(query) {
     if (!q) return Promise.reject(new Error("검색어를 입력해 주세요."));
     if (!getAladinTtbKey())
         return Promise.reject(
-            new Error("알라딘 키가 설정되지 않았어요. aladin.config.example.js를 보고 aladin.config.local.js를 만드세요.")
+            new Error(
+                "알라딘 API 키가 없어요.\n\n· 로컬: aladin.config.example.js 를 복사해 aladin.config.local.js 를 만드세요.\n· Vercel: Settings → Environment Variables 에 ALADIN_TTB_KEY 를 넣고 재배포하세요. (또는 npm run build 로 aladin.config.deploy.js 생성)"
+            )
         );
     return new Promise((resolve, reject) => {
         // 알라딘은 Callback 이름이 특정 형태일 때 JSON만 주고 JSONP 래핑을 안 함(앞에 __ 두 개면 JSON만 옴 → 스크립트 로드 실패).
