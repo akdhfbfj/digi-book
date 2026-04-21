@@ -78,7 +78,7 @@ function aladinItemSearchJsonp(query) {
     if (!getAladinTtbKey())
         return Promise.reject(
             new Error(
-                "알라딘 API 키가 없어요.\n\n· 로컬: aladin.config.example.js 를 복사해 aladin.config.local.js 를 만드세요.\n· Vercel: Settings → Environment Variables 에 ALADIN_TTB_KEY 를 넣고 재배포하세요. (또는 npm run build 로 aladin.config.deploy.js 생성)"
+                "알라딘 키가 비어 있어요.\n\n[로컬] aladin.config.local.js 한 줄: window.__ALADIN_TTB_KEY__ = \"TTB키\";\n[Vercel] Environment Variables → ALADIN_TTB_KEY → 재배포 후 /api/aladin-config 에 키가 보이는지 확인"
             )
         );
     return new Promise((resolve, reject) => {
