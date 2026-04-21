@@ -53,7 +53,8 @@ function buildAladinItemSearchScriptUrl(searchWord, callbackName) {
     const params = new URLSearchParams({
         ttbkey: getAladinTtbKey(),
         Query: searchWord.trim(),
-        QueryType: "Title",
+        // Title 은 제목 일치에 가깝게 동작해 빈 결과가 잦음 → Keyword 가 학생 검색에 맞음
+        QueryType: "Keyword",
         MaxResults: "10",
         start: "1",
         SearchTarget: "Book",
@@ -66,8 +67,9 @@ function buildAladinItemSearchScriptUrl(searchWord, callbackName) {
 }
 
 function normalizeAladinItemList(payload) {
-    if (!payload || payload.item == null) return [];
-    const raw = payload.item;
+    if (!payload || typeof payload !== "object") return [];
+    const raw = payload.item ?? payload.Item ?? payload.items ?? payload.Items;
+    if (raw == null) return [];
     return Array.isArray(raw) ? raw : [raw];
 }
 
@@ -104,7 +106,8 @@ function aladinItemSearchJsonp(query) {
         const tid = setTimeout(() => done(new Error("알라딘 검색 시간이 초과되었어요.")), 15000);
 
         window[cbName] = (ok, data) => {
-            // TTB output=js: 성공 (true, payload), 실패 (false, { errorCode, errorMessage })
+            // TTB: 실패는 보통 (false, { errorCode, errorMessage }). 성공은 (true, payload).
+            // !ok 로 보면 ok 가 0 인 경우 등에서 오판할 수 있어 false 만 실패로 처리.
             if (arguments.length === 1) {
                 const payload = ok;
                 if (payload && typeof payload.errorCode === "number" && payload.errorCode !== 0) {
@@ -112,13 +115,17 @@ function aladinItemSearchJsonp(query) {
                 }
                 return done(null, normalizeAladinItemList(payload));
             }
-            if (!ok) {
+            if (ok === false) {
                 const detail = (data && data.errorMessage) || "";
                 const hint =
                     "알라딘 검색에 실패했어요. TTB 키 관리(알라딘 오픈API)에서 웹 사용 도메인에 배포 주소(예: opobook53.vercel.app)를 넣었는지 확인해 주세요. 로컬(127.0.0.1)만 허용된 키는 배포 사이트에서 막힐 수 있어요.";
                 return done(new Error(detail || hint));
             }
-            done(null, normalizeAladinItemList(data));
+            const payload = data != null ? data : ok;
+            if (payload && typeof payload === "object" && typeof payload.errorCode === "number" && payload.errorCode !== 0) {
+                return done(new Error(payload.errorMessage || "알라딘 API 오류"));
+            }
+            done(null, normalizeAladinItemList(payload));
         };
 
         script.onerror = () => done(new Error("알라딘 서버에 연결하지 못했어요."));
@@ -670,7 +677,8 @@ function App() {
         try {
             const items = await aladinItemSearchJsonp(q);
             setAladinResults(items);
-            if (items.length === 0) showAlert("검색 결과가 없어요. 다른 제목으로 해 보세요.", "📚");
+            if (items.length === 0)
+                showAlert("검색 결과가 없어요. 책 이름 일부나 저자, 다른 단어로 다시 검색해 보세요.", "📚");
         } catch (e) {
             showAlert(e.message || "검색 중 오류가 났어요.", "⚠️");
         } finally {
